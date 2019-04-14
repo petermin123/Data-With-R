@@ -1,0 +1,57 @@
+---
+title: "QTM 150 Final Project"
+output: html_document
+date: 12/10/2018
+authors: Honggang Min, Xiaoyu Fu
+---
+### Xiaoyu Fu, Honggang Min
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+```
+
+### For our project, we chose a dataset focusing on drivers involved in fatal collisions around the United States. The data was collected by the author from NHTSA (National Highway Traffic Safety Administration).
+```{r}
+drivers <- read.csv("bad-drivers.csv", 
+                    col.names = c("State", 
+                                  "num_drivers_per_billion_miles", 
+                                  "% _drivers_speeding",
+                                  "%_drivers_alcohol_impaired", 
+                                  "%_drivers_not_distracted", 
+                                  "%_drivers_no_history",
+                                  "car_insurance_premium", 
+                                  "Losses_per_driver"))
+```
+
+## Question 1: What kind of relationship exists between number of drivers involved in fatal collisions per billion miles and average car insurance premium?
+```{r}
+ggplot(drivers, aes(x = num_drivers_per_billion_miles, y = car_insurance_premium)) + 
+  geom_point() + 
+  geom_smooth(color = "red", method = "loess", formula = y ~ x) + 
+  labs(x = "Number of Drivers", y = "Average Car Insurance Premium", 
+    title = "Drivers involved in fatal collisions per billion miles VS Car Insurance Premium")
+```
+
+### It turns out that average car insurance premium and of drivers per billion miles follows a non-linear relationship and there is not a strong correlation between these two variables as there are many outliers.
+
+## Question 2: How does Georgia compare to all others states in terms of average price of car insurance premium that car owners have to pay?
+```{r}
+ggplot(drivers, aes(x = reorder(State, car_insurance_premium), y = car_insurance_premium, width = 0.5)) + 
+  geom_bar(stat = "identity", color = "blue") + 
+  coord_flip() +
+  labs(title = "Average Price of Car Insurance Premium ranked by States", y = "Average Car Insurance Premium", x = NULL)
+```
+
+### From the barplot it can be shown that while New Jersey has the highest car insurance premium and Idaho the lowest, insurance companies in Georgia ranks 16th out of 52 states, charging a relatively high car insurance premium.
+
+## Question 3: What's the relationship between insurance premium and the losses incurred for collisions per insured driver?
+```{r}
+ggplot(drivers, aes(Losses_per_driver, car_insurance_premium)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(color="red", method = "loess") + 
+  labs(x = "Losses incurred", y = "Insurance premium",
+       title = "Car Insurance Premium VS Losses incurred for collisions per insured driver")
+```
+
+### As we can see, there's a general trend that the car insurance premium increases as the losses incurred rises, which indicates a positive relationship between car insurance premium and insurance companies' losses for collisios.
